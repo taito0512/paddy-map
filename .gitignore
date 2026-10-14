@@ -1,0 +1,14 @@
+# Python が自動生成するもの
+__pycache__/
+*.pyc
+.venv/
+
+# データ（大きいので除外。サンプルだけ例外的に含める）
+data/*.csv
+!data/sample.csv
+
+# SQLite のデータベース（Phase 2 で作る。CSV から再生成できる）
+*.db
+
+# Mac が勝手に作る
+.DS_Store
