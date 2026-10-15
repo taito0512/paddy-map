@@ -1,5 +1,6 @@
 import pandas as pd
 
-sample=pd.read_csv("data/sample.csv")
-print(len(sample))
-print(sample["final_label"].value_counts())
+def count_labels(path):
+    df = pd.read_csv(path)
+    return df["final_label"].value_counts()
+print(count_labels("data/sample.csv"))
