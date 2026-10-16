@@ -19,3 +19,9 @@ def paddy_ratio_by_region(path):
     return df.groupby("local_gove")["is_paddy"].mean()
 
 print(paddy_ratio_by_region("data/sample.csv"))
+
+def filter_by_confidence(path, threshold):
+    df = pd.read_csv(path)
+    return df[df["stage2_prob"] >= threshold]
+
+print(len(filter_by_confidence("data/sample.csv", 0.3))) 
