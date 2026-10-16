@@ -1,15 +1,16 @@
 import pandas as pd
+import argparse
 
 def count_labels(path):
     df = pd.read_csv(path)
     return df["final_label"].value_counts()
-print(count_labels("data/sample.csv"))
+
 
 def paddy_ratio(path):
     counts = count_labels(path)    
     return counts["水田"]/ counts.sum() 
 
-print(paddy_ratio("data/sample.csv"))
+
 
 
 def paddy_ratio_by_region(path):
@@ -18,10 +19,27 @@ def paddy_ratio_by_region(path):
 
     return df.groupby("local_gove")["is_paddy"].mean()
 
-print(paddy_ratio_by_region("data/sample.csv"))
+
 
 def filter_by_confidence(path, threshold):
     df = pd.read_csv(path)
     return df[df["stage2_prob"] >= threshold]
 
-print(len(filter_by_confidence("data/sample.csv", 0.3))) 
+
+
+def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("path")
+    parser.add_argument("--threshold", type=float)
+
+    args = parser.parse_args()
+
+
+    if args.threshold is None:
+      print(paddy_ratio_by_region(args.path))
+    else:
+      print(len(filter_by_confidence(args.path, args.threshold)))
+
+if __name__ == "__main__":
+    main()
