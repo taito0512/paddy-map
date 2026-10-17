@@ -1,0 +1,17 @@
+# GitHub Actions：push / PR のたびに pytest を実行する
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest   # GitHub が用意する Linux の仮想マシン
+    steps:
+      - uses: actions/checkout@v4          # リポジトリの中身を仮想マシンに取ってくる
+      - uses: actions/setup-python@v5      # Python を入れる
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt   # pandas と pytest を入れる
+      - run: pytest                            # テスト実行。失敗すると赤になる
