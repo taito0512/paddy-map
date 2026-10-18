@@ -15,7 +15,7 @@ def paddy_ratio(path):
 
 def paddy_ratio_by_region(path):
     df = pd.read_csv(path)
-    df["is_paddy"] = df["final_label"] == "水"
+    df["is_paddy"] = df["final_label"] == "水田"
 
     return df.groupby("local_gove")["is_paddy"].mean()
 
