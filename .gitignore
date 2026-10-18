@@ -12,3 +12,5 @@ data/*.csv
 
 # Mac が勝手に作る
 .DS_Store
+# エディタの個人設定
+.vscode/
