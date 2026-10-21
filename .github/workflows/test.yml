@@ -14,4 +14,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt   # pandas と pytest を入れる
+      - run: sqlite3 data/paddy.db < src/schema.sql   # テーブルを作る（毎回まっさらな環境なので必要）
+      - run: python3 src/import_csv.py                # sample.csv を取り込む
       - run: pytest                            # テスト実行。失敗すると赤になる
