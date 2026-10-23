@@ -8,5 +8,14 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 fetch("data/sample_polygons.geojson")
   .then(response => response.json())
   .then(data => {
-    L.geoJSON(data).addTo(map);
+     L.geoJSON(data, {
+      style: feature => {
+        if (feature.properties.final_label === "水田") {
+          return { color: "green" };
+        } else {
+          return { color: "red" };
+        }
+      }
+    }).addTo(map);
   });
+
