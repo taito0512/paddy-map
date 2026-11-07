@@ -21,6 +21,10 @@ def regions():
     conn.close()
     return rows
 
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
 @app.get("/parcels")
 def parcels(region: int, threshold: float = 0.0):
     conn = sqlite3.connect("data/paddy.db")

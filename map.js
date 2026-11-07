@@ -18,7 +18,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 let currentLayer = null;  // 今表示しているレイヤーを覚えておく箱
 
 function loadParcels(threshold) {
-  fetch(`http://127.0.0.1:8000/parcels?region=82350&threshold=${threshold}`)
+  fetch(`https://pa-dd320c9be7d44bafbe5daa45585290d9.ecs.ap-northeast-1.on.aws/parcels?region=82350&threshold=${threshold}`)
     .then(response => response.json())
     .then(data => {
       if (currentLayer) {

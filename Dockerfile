@@ -20,10 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ src/
 COPY data/ data/
 
-# このコンテナは 8000 番ポートで通信する、という宣言
-EXPOSE 8000
+# このコンテナは 80 番ポートで通信する、という宣言
+# （AWS ECS Express Mode のゲートウェイが 80 番固定のため、合わせている）
+EXPOSE 80
 
 # コンテナが起動したときに実行するコマンド
 # ローカルでやってきた「sqlite3 ... < schema.sql」「import_csv.py」「uvicorn」を
 # 順番に実行する（CIの test.yml でやっているのと同じ考え方）
-CMD sh -c "sqlite3 data/paddy.db < src/schema.sql && python3 src/import_csv.py && uvicorn src.api:app --host 0.0.0.0 --port 8000"
+CMD sh -c "sqlite3 data/paddy.db < src/schema.sql && python3 src/import_csv.py && uvicorn src.api:app --host 0.0.0.0 --port 80"
