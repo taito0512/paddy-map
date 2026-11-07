@@ -1,0 +1,57 @@
+# main に push されるたびに、Docker イメージを作って ECR に送り、
+# ECS Express のサービスに新しいイメージで動かし直すよう指示する
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: ap-northeast-1
+  ECR_REPOSITORY: paddy-map
+  ECS_CLUSTER: default
+  ECS_SERVICE: paddy-map-3ea5
+
+jobs:
+  test:
+    # 先にテストを走らせる。ここが失敗したらデプロイしない
+    uses: ./.github/workflows/test.yml
+
+  deploy:
+    needs: test  # テストが通ったときだけ実行される
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: AWS の認証情報を設定
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: ECR にログイン
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # GitHub Actions のマシンは x86_64 だが、ECS 側は arm64（Apple Silicon で
+      # 作っていたのと同じアーキテクチャ）なので、QEMU で arm64 用にビルドする
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - name: イメージをビルドして ECR に push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.ecr-login.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+
+      - name: ECS のサービスを新しいイメージで再デプロイ
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_SERVICE }} \
+            --force-new-deployment \
+            --deployment-configuration '{"strategy":"CANARY","canaryConfiguration":{"canaryPercent":100,"canaryBakeTimeInMinutes":1},"bakeTimeInMinutes":1}'

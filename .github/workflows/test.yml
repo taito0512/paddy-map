@@ -4,6 +4,7 @@ name: test
 on:
   push:
   pull_request:
+  workflow_call:   # deploy.yml から「先にテストさせて」と呼び出せるようにする
 
 jobs:
   pytest:
